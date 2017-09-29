@@ -1,0 +1,14 @@
+CREATE TABLE
+    USER_T
+    (
+        ID NUMBER(11) NOT NULL,
+        USER_NAME VARCHAR2(40) NOT NULL,
+        PASSWORD VARCHAR2(255) NOT NULL,
+        AGE NUMBER(4) NOT NULL,
+        PRIMARY KEY (ID)
+    );
+
+
+
+
+INSERT INTO USER_T (ID, USER_NAME, PASSWORD, AGE) VALUES (1, '≤‚ ‘', 'sfasgfaf', 24);

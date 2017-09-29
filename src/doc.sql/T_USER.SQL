@@ -1,0 +1,14 @@
+CREATE TABLE
+    T_USER
+    (
+        ID NUMBER(10) NOT NULL,
+        USERNAME VARCHAR2(20),
+        PASSWORD VARCHAR2(10),
+        ACCOUNT VARCHAR2(11)
+    );
+
+
+
+
+
+INSERT INTO T_USER (ID, USERNAME, PASSWORD, ACCOUNT) VALUES (1, 'qinxg', '000000', 'asdas');
