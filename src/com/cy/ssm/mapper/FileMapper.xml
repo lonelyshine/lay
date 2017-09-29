@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.ssm.mapper.FileMapper">
+	
+	<!-- 插入新上传的附件信息-->
+	<insert id="insertFileInfo" parameterType="String"  >  
+	  
+	  insert into FILEMANAGER (ID,USERID,FILENAME,FILEPATH,FILECATEGORY,FILETYPE,FOLDER,FILETIME) 
+	  values(${Id},${userId},'${fileName}','${filePath}','${fileCategory}','${fileType}','${folder}','${fileTime}')
+	
+	</insert>
+	
+	
+	<!-- 文件列表信息查询 -->
+	<select id="queryFileList" parameterType="java.lang.String"  resultType="Map">  
+      select ID,FILENAME,FILETYPE,FILEPATH,FILETIME from FILEMANAGER where 1=1 
+      <if test="fileCategory != null and fileCategory !=''">  
+        AND fileCategory = '${fileCategory}'
+    </if>
+    <if test="folder != null and folder !=''">  
+        AND folder = '${folder}'
+    </if>   
+    <if test="filetab != null and filetab !=''">  
+        AND filetab = '${filetab}'
+    </if>  
+    order by FILETIME desc    
+	</select>
+	
+</mapper>	

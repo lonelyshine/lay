@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.ssm.mapper.EmailMapper">
+
+<!-- 自定义返回结果集 -->
+   <resultMap id="emailMap" type="EmailBean">
+		<id     property="emailId"       column="emailId"       javaType="java.lang.Integer"></id>
+		<result property="emailUID"     column="emailUID"     javaType="java.lang.String"></result>
+		<result property="sender"     column="sender"     javaType="java.lang.String"></result>
+		<result property="recipients" column="recipients" javaType="java.lang.String"></result>
+		<result property="copyRecipients"          column="copyRecipients"          javaType="java.lang.String"></result>
+		<result property="secretRecipients"          column="secretRecipients"          javaType="java.lang.String"></result>
+		<result property="title"     column="title"     javaType="java.lang.String" ></result>
+		<result property="content"          column="content"          javaType="java.lang.String" jdbcType="CLOB"></result>
+		<result property="thetime"           column="thetime"           javaType="java.lang.String"></result>
+		<result property="upload"        column="upload"        javaType="java.lang.String"></result>
+		<result property="emailType"    column="emailType"    javaType="java.lang.String"></result>
+		<result property="emailStatus" column="emailStatus" javaType="java.lang.String"></result>
+		
+		<result property="priority"           column="priority"           javaType="java.lang.String"></result>
+		<result property="replySign"        column="replySign"        javaType="java.lang.String"></result>
+		<result property="isupload"    column="isupload"    javaType="java.lang.String"></result>
+		<result property="emailSize" column="emailSize" javaType="java.lang.String"></result>
+		
+	</resultMap>
+
+
+	<!-- 查询用户是否存在邮箱 -->
+	<select id="queryEmail" parameterType="int"  resultType="Map" statementType="STATEMENT">  
+      select t2.email from userinfo t2  where t2.userId = ${userId}
+      	<!-- <if test="t2.email !=null">
+	      and ( t1.sender = t2.email or t1.recipients = t2.email )
+	  </if>  -->
+	</select>
+	
+	<!-- 查询用户发送的邮件 -->
+	<select id="queryAllSenderEmail" parameterType="String"  resultType="Map" statementType="STATEMENT">  
+      select * from emailinfo where sender = '${userEmail}' and emailType = '3'
+	</select>
+	<!-- 查询用户接收的邮件 -->
+	<select id="queryAllRecipientsEmail" parameterType="String"  resultType="Map" statementType="STATEMENT">  
+      select * from emailinfo where recipients = '${userEmail}' and emailType = '1'
+	</select>
+	<!-- 查询用户重要的邮件 -->
+	<select id="queryAllImportanceEmail" parameterType="String"  resultType="Map" statementType="STATEMENT">  
+      select * from emailinfo where emailType = '5' and (recipients = '${userEmail}' or sender = '${userEmail}')
+	</select>
+	<!-- 查询用户草稿的邮件 -->
+	<select id="queryAllDraftEmail" parameterType="String"  resultType="Map" statementType="STATEMENT">  
+      select * from emailinfo where sender = '${userEmail}' and emailType = '2'
+	</select>
+	<!-- 查询用户删除的邮件 -->
+	<select id="queryAllDeleteEmail" parameterType="String"  resultType="Map" statementType="STATEMENT">  
+      select * from emailinfo where emailType = '4' and (recipients = '${userEmail}' or sender = '${userEmail}')
+	</select>
+	
+	
+	<!-- 查询用户未读的邮件数量 -->
+	<select id="queryNotReadEmail" parameterType="String"  resultType="String" statementType="STATEMENT">  
+      select count(*) from emailinfo where emailStatus = '0' and recipients like '%${userEmail}%' and EMAILTYPE ='1'
+	</select>
+	
+	
+	<!-- 查询用户总的邮件数量 -->
+	<select id="queryEmailTotal" parameterType="String"  resultType="Map" statementType="STATEMENT">  
+      select t.total,t1.noread,t2.send,t3.important,t4.dustbin,t5.draft from (select count(*) as total from emailinfo where recipients like '%${userEmail}%' and EMAILTYPE ='1') t,
+                                    (select count(*) as noread from emailinfo where emailStatus = '0' and recipients like '%${userEmail}%' and EMAILTYPE ='1') t1,
+                                    (select count(*) as send from emailinfo where sender like '%${userEmail}%' and EMAILTYPE ='3') t2,
+                                    (select count(*) as important from emailinfo where  EMAILTYPE ='5' and (sender like '%${userEmail}%' or recipients like '%${userEmail}%') ) t3,
+                                    (select count(*) as dustbin from emailinfo where  EMAILTYPE ='4' and (sender like '%${userEmail}%' or recipients like '%${userEmail}%') ) t4,
+                                    (select count(*) as draft from emailinfo where  EMAILTYPE ='2' and sender like '%${userEmail}%') t5
+	</select>                                                                           
+	
+	<!-- 分页查询用户邮件 -->
+	<select id="queryEmailByUser" parameterType="java.lang.String"  resultType="Map">  
+      select EMAILID,SENDER,TITLE,THETIME,EMAILSTATUS,ISUPLOAD from emailinfo where 1=1 
+      <if test="userEmail != null and userEmail !=''">  
+        AND recipients like '%${userEmail}%' and EMAILTYPE ='1'  order by THETIME desc
+    </if>   
+	</select>
+	
+	
+	<!-- 根据条件分页查询邮件信息 -->
+	<select id="queryEmailByTerm" parameterType="java.lang.String"  resultType="Map">  
+      select EMAILID,SENDER,TITLE,THETIME,EMAILSTATUS,ISUPLOAD from emailinfo where 1=1 
+      <if test="userEmail != null and userEmail !=''">  
+        AND recipients like '%${userEmail}%' and EMAILTYPE ='1' order by ${term}  ${sort}
+    </if>   
+	</select>
+	
+	
+	<!-- 查询邮件uid -->
+	<select id="getEmailUID" parameterType="String"  resultType="Map" statementType="STATEMENT">  
+      select EMAILUID from emailinfo where recipients like '%${userEmail}%'
+	</select>
+	
+	<!-- 插入新邮件 -->
+	<insert id="InsertNewEmail" parameterType="String"  >  
+	  insert into emailinfo (EMAILUID,SENDER,RECIPIENTS,COPYRECIPIENTS,SECRETRECIPIENTS,TITLE,CONTENT,THETIME,UPLOAD,EMAILTYPE,EMAILSTATUS,PRIORITY,REPLYSIGN,ISUPLOAD,EMAILSIZE) 
+	  values('${emailUID}','${sender}','${recipients}','${copyRecipients}','${secretRecipients}','${title}',#{content,jdbcType=CLOB},'${thetime}','${upload}','${emailType}','${emailStatus}','${priority}','${replySign}','${isupload}','${emailSize}')
+	</insert>
+	
+	<!-- 查询邮件详情-->
+	<select id="queryEmailContent" parameterType="Long"  resultType="com.cy.ssm.beans.EmailBean" >  
+      select CONTENT,SENDER,RECIPIENTS,COPYRECIPIENTS,SECRETRECIPIENTS,TITLE,THETIME,UPLOAD from emailinfo where EMAILID = ${emailid} 
+	</select>
+	
+	<!-- 修改邮件读取状态-->
+	<update id="updateEmailStatus" parameterType="Long">  
+      update emailinfo set EMAILSTATUS ='1' where EMAILID = ${emailid}
+	</update>
+	
+	
+	<!-- 根据邮件标题查询邮件信息 -->
+	<select id="queryEmailByTitle" parameterType="java.lang.String"  resultType="Map">  
+      select t1.total,t.EMAILID,t.SENDER,t.TITLE,t.THETIME,t.EMAILSTATUS from emailinfo t,(select count(*) as total  from emailinfo where recipients like '%${userEmail}%'  and title like '%${title}%') t1 
+        where recipients like '%${userEmail}%'  and title like '%${title}%' and EMAILTYPE ='1'
+	</select>
+	
+	<!-- 修改邮件信息的相关状态标识-->
+	<update id="updateEmailTab" parameterType="java.lang.String">  
+      update emailinfo set ${field} ='${value}' where EMAILID in (${emailid})
+	</update>
+	
+	
+	<!-- 插入发送邮件信息-->
+	<insert id="insertEmail" parameterType="String"  >  
+	  insert into emailinfo (EMAILUID,SENDER,RECIPIENTS,COPYRECIPIENTS,SECRETRECIPIENTS,TITLE,CONTENT,THETIME,UPLOAD,EMAILTYPE,EMAILSTATUS,PRIORITY,REPLYSIGN,ISUPLOAD) 
+	  values('emailsendid','${sender}','${recipients}','${copyRecipients}','${secretRecipients}','${title}',#{content,jdbcType=CLOB},'${thetime}','${upload}','3','1','普通','false','${isupload}')
+	</insert>
+	
+	<!-- 插入草稿邮件信息-->
+	<insert id="insertDraftEmail" parameterType="String"  >  
+	  insert into emailinfo (EMAILUID,SENDER,RECIPIENTS,COPYRECIPIENTS,SECRETRECIPIENTS,TITLE,CONTENT,THETIME,UPLOAD,EMAILTYPE,EMAILSTATUS,PRIORITY,REPLYSIGN,ISUPLOAD) 
+	  values('emaildraftid','${sender}','${recipients}','${copyRecipients}','${secretRecipients}','${title}',#{content,jdbcType=CLOB},'${thetime}','${upload}','2','1','普通','false','${isupload}')
+	</insert>
+	
+	<!-- 查询邮件详情-->
+	<select id="nextEmail" parameterType="Long"  resultType="Map" >  
+      select EMAILID,SENDER,RECIPIENTS,EMAILTYPE from emailinfo where EMAILTYPE = (select EMAILTYPE from emailinfo where EMAILID = ${emailid}) and (recipients like '%${userEmail}%' or sender like '%${userEmail}%') order by THETIME desc
+	</select>
+	
+	
+	<!-- 根据邮件类型分页查询邮件 -->
+	<select id="queryEmailByType" parameterType="java.lang.String"  resultType="Map">  
+      select EMAILID,SENDER,TITLE,THETIME,EMAILSTATUS,ISUPLOAD from emailinfo where 1=1 
+      <if test="userEmail != null and userEmail !=''">  
+        AND (SENDER like '%${userEmail}%' or RECIPIENTS like '%${userEmail}%') and  EMAILTYPE = '${type}'  order by THETIME desc
+    </if>   
+	</select>
+	
+	
+	<!-- 根据邮件类型和邮件字段条件分页查询邮件信息  -->
+	<select id="queryEmailByTermAndType" parameterType="java.lang.String"  resultType="Map">  
+      select EMAILID,SENDER,TITLE,THETIME,EMAILSTATUS,ISUPLOAD from emailinfo where 1=1 
+      <if test="userEmail != null and userEmail !=''">  
+        AND recipients like '%${userEmail}%' and EMAILTYPE ='${type}' order by ${term}  ${sort}
+    </if>   
+	</select>
+	
+	<!-- 根据邮件标题查询邮件信息 -->
+	<select id="queryEmailByTitleAndType" parameterType="java.lang.String"  resultType="Map">  
+      select t1.total,t.EMAILID,t.SENDER,t.TITLE,t.THETIME,t.EMAILSTATUS from emailinfo t,(select count(*) as total  from emailinfo where recipients like '%${userEmail}%'  and title like '%${title}%') t1 
+        where recipients like '%${userEmail}%'  and title like '%${title}%' and EMAILTYPE ='${type}'
+	</select>
+	
+</mapper>	

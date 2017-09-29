@@ -1,0 +1,201 @@
+/*第3单元  项目3-2 多肉书城*/
+    body {
+            margin: 0;
+            padding: 0;
+            background-color: #F7F7F7;
+        }
+    header {
+        text-align: center;
+        height: 450px;
+        margin-top: 20px;
+    }
+    section {
+        width: 880px;
+        margin: 20px auto;
+        background-color: #AAE6DA;
+    }
+    section>p {
+        font-family: 'STXingkai';
+        font-size:18px;
+        color: #fff;
+        line-height:30px;
+        padding: 20px;
+        text-indent: 2em;/*文本段落首行缩进两格*/
+    }
+    footer {
+        width: 880px;
+        margin: 0 auto;
+    }
+    footer>p {
+        font-family: 'STXingkai';
+        font-size:35px;
+        color: #AAE6DA;
+        line-height:20px;
+        padding: 20px;
+        text-align: center;
+    }
+.services {
+    font-family: 'Microsoft Yahei';
+    font-size:15px;
+    color: #374136;
+    padding-bottom: 50px;
+    text-align: center;
+}
+
+.border-radiuslist{
+	        width: 700px;
+            height: 50px;
+            margin: 35px auto;
+            font-family: 'Microsoft Yahei';
+            font-size:25px;
+            color: #fff;
+            line-height:50px;
+            text-align: center;
+}   
+
+.border-radiusbetween{
+	        width: 20px;
+            height: 50px;
+            margin: 35px auto;
+            font-family: 'Microsoft Yahei';
+            font-size:25px;
+            color: #fff;
+            line-height:50px;
+            text-align: center;
+} 
+  
+    .border-radius {
+            width: 200px;
+            height: 50px;
+            margin:0 auto;
+            background-color: #AAE6DA;
+            border:5px solid #fff;
+            border-radius: 50px;/*四个边框圆角半径都是50px*/
+            font-family: 'Microsoft Yahei';
+            font-size:25px;
+            color: #fff;
+            line-height:50px;
+            text-align: center;
+			
+    }
+    
+    .border-radiuslist1{
+	        width: 260px;
+            height: 50px;
+            margin: 35px auto;
+            font-family: 'Microsoft Yahei';
+            font-size:25px;
+            color: #fff;
+            line-height:50px;
+            text-align: center;
+}
+    
+    .border-radius1 {
+            width: 80px;
+            height: 50px;
+            margin:0 auto;
+            background-color: #AAE6DA;
+            border:5px solid #fff;
+            border-radius: 50px;/*四个边框圆角半径都是50px*/
+            font-family: 'Microsoft Yahei';
+            font-size:25px;
+            color: #fff;
+            line-height:50px;
+            text-align: center;
+			
+    }
+    
+    .border-radiusbetween1{
+	        width: 80px;
+            height: 50px;
+            margin: 6px auto;
+            font-family: 'Microsoft Yahei';
+            font-size:25px;
+            color: #fff;
+            line-height:50px;
+            text-align: center;
+} 
+    
+    /*当鼠标悬停在该元素时，绝对定位在父元素顶部-5px，以及给该元素加盒阴影*/
+    .border-radius:hover {
+            top: -5px;
+            box-shadow: 0 0 15px #AAA;/*模糊值为15px的#AAA色的盒阴影*/
+        }
+    .main {
+            width: 880px;
+            border: 40px solid #ccc;
+            height: 440px;
+            margin: 0 auto;
+    }
+    .view {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            margin: 10px;
+            float: left;
+        }
+        .hover {
+            width: 200px;
+            background: rgba(0, 0,0,0.5);
+            position: absolute;
+            top: 40px;
+            left: 0;
+            text-align: center;
+            color: #fff;
+            transform: rotate(55deg);/*变形：旋转55度*/
+            -webkit-transform: rotate(55deg);
+            transition: all 0.5s;/*过渡：所有属性都改变，时长0.5s*/
+            -webkit-transition: all 0.5s;
+            overflow: hidden;
+            height: 0;
+            z-index: 4000; /*设置元素的堆叠顺序，属性值越大，该元素层离用户越近*/
+        }
+         .hover h3 {
+                color: #fff;
+                border-bottom: 2px solid rgba(76, 179,77, 0.5);
+                padding-bottom: 10px;
+            }
+        .view:hover .hover {
+            height: 120px;
+            transform: rotate(0deg);
+            -webkit-transform: rotate(0deg);
+        }
+        /*before   after为选择器，一般给选择器加动画背景，设置动画样式*/
+        .view:before {
+            content: "";
+            position: absolute;
+            top: -240px;
+            right: 0;
+            width: 360px;
+            height: 360px;
+            background: rgba( 133, 203,190,0.5);
+            transform: rotate(55deg) translateX(60px);/*变形：旋转55度，水平（向右）移动60px*/
+            -webkit-transform: rotate(55deg) translateX(60px);
+            transform-origin: 100% 0%;/*设置元素变形起始点*/
+            -webkit-transform-origin: 100% 0%;
+            transition: all 0.5s ease 0.3s;/*过渡动画：所有属性都改变，时长0.5s,速率逐渐变慢，延迟0.3s*/
+            -webkit-transition: all 0.5s ease 0.3s;
+        }
+        /*写好样式，进行隐藏，用top:-240px;*/
+        .view:hover:before {
+            top: 0;
+        }
+        .view:after {
+            content: "";
+            position: absolute;
+            bottom: -240px;
+            left: 0;
+            width: 360px;
+            height: 360px;
+            background: rgba( 133, 203,190,0.5);
+            transform: rotate(55deg) translateX(-60px);
+            -webkit-transform: rotate(55deg) translateX(-60px);
+            transform-origin: 0% 100%;
+            -webkit-transform-origin: 0% 100%;
+            transition: all 0.5s ease 0.3s;
+            -webkit-transition: all 0.5s ease 0.3s;
+        }
+        .view:hover:after {
+            bottom: 0px;
+        }

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+http://www.springframework.org/schema/context   http://www.springframework.org/schema/context/spring-context-3.2.xsd
+http://www.springframework.org/schema/mvc   
+http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+	<!-- 启动注解，注册服务，如验证框架、全局类型转换器-->
+	<mvc:annotation-driven/> 
+        <mvc:resources location="/img/" mapping="/img/**"/> 
+		<mvc:resources location="/css/" mapping="/css/**"/> 
+		<mvc:resources location="/js/" mapping="/js/**"/> 
+		<mvc:resources location="/fonts/" mapping="/fonts/**"/> 
+    <mvc:annotation-driven/> 
+	
+	<!-- 启动自动扫描 -->
+	<context:component-scan base-package="com.cy.ssm">
+	<!-- 制定扫包规则 ,只扫描使用@Controller注解的JAVA类 -->
+	    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	
+	
+	<mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+          <!-- StringHttpMessageConverter编码为UTF-8，防止乱码 -->  
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">  
+                <constructor-arg value="UTF-8"/>  
+                <property name = "supportedMediaTypes">  
+                    <list>  
+                        <bean class="org.springframework.http.MediaType">  
+                            <constructor-arg index="0" value="text"/>  
+                            <constructor-arg index="1" value="plain"/>  
+                            <constructor-arg index="2" value="UTF-8"/>  
+                        </bean>  
+                        <bean class="org.springframework.http.MediaType">  
+                            <constructor-arg index="0" value="*"/>  
+                            <constructor-arg index="1" value="*"/>  
+                            <constructor-arg index="2" value="UTF-8"/>  
+                        </bean>  
+                    </list>  
+                </property>  
+            </bean>  
+            <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+            <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+	
+	
+	
+	
+	<!-- 开始jsp文件视图的配置 -->
+	
+	<!-- 配置视图解析器  org.springframework.web.servlet.view.UrlBasedViewResolver -->
+    <!--
+   	prefix和suffix：查找视图页面的前缀和后缀（前缀[逻辑视图名]后缀），
+   	比如传进来的逻辑视图名为WEB-INF/jsp/hello，则该该jsp视图页面应该存放在“WEB-INF/jsp/hello.jsp”； -->
+	 <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+		<property name="prefix" value="/"></property>     <!--  我这里的视图直接放在WebRoot下的 -->
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	
+	<!-- 结束jsp文件视图的配置 -->	
+	
+	<!-- 开始html文件视图的配置 -->
+	
+	<!-- 设置freeMarker的配置文件路径 -->
+   <!--  <bean id="freemarkerConfiguration"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        注释掉的下方代码是指引freemarker的基本信息的配置位置，因为我已经将配置信息移到了applicationContext文件下，所以这里就没必要存在了，不注释也不会有问题的
+        <property name="location" value="classpath:/WEB-INF/config/freemarker.properties" />
+    </bean>
+	
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="exposeRequestAttributes" value="true" />
+        <property name="exposeSessionAttributes" value="true" />
+        <property name="viewClass">
+            <value>org.springframework.web.servlet.view.freemarker.FreeMarkerView</value>
+        </property>
+        <property name="cache"><value>true</value></property>
+        这里需要注意一下，我注释了下面这样一行代码，这行代码的意思就是指引freemarker需要解析的文件的位置。注释掉原因是因为
+         applicationContext.xml里有这样一行代码：<property name="templateLoaderPath" value="/WEB-INF/views/" /> 已经指定了视图位置。如果我们这里依然保留下方代码，页面回报406的找不到的错误
+        <property name="prefix"><value>/WEB-INF/views/</value></property>
+        <property name="suffix"><value>.html</value></property>
+        <property name="contentType">
+            <value>text/html; charset=UTF-8</value>
+        </property>
+    </bean> -->
+	
+	<!-- 结束html文件视图的配置 -->
+	
+	
+	<!-- 上传附件时需要进行配置 -->
+	<!-- Only needed because we require fileupload in the org.springframework.samples.mvc.fileupload package -->  
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />  
+	
+	
+	
+</beans>

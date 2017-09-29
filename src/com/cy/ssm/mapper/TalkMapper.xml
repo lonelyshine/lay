@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.ssm.mapper.TalkMapper">
+	<!-- 个人信息查询 -->
+	<select id="getTolkInfo" parameterType="int"  resultType="Map">  
+        select t1.USERID,t1.NICKNAME,t1.REMARK,t1.ONLINESTATUS,t1.AVATAR 
+        from TALKOTHER t1  where t1.USERID = ${userId}
+	</select>
+	
+	
+	<!-- 好友信息查询 -->
+	<select id="getTolkFriendInfo" parameterType="int"  resultType="Map">  
+        select t2.FRIDENDID,t2.FNICKNAME,t2.FREMARK,t2.FSTATUS,t2.FAVATAR,t2.GROUPNAME,t2.GROUPID
+        from TALKFRIEND t2  where t2.USERID = ${userId}  order by t2.GROUPID
+	</select>
+	
+	<!-- 群组信息查询 -->
+	<select id="getTolkGroupInfo" parameterType="int"  resultType="Map">  
+        select t2.GROUPID,t2.GAVATAR,t2.GROUPNAME
+        from TALKGROUP t2  where t2.USERID = ${userId} 
+	</select>
+	
+	
+	<!-- 群组成员信息查询 -->
+	<select id="getMembers" parameterType="int"  resultType="Map">  
+        select t.USERID,t.NICKNAME,t.REMARK,t.ONLINESTATUS,t.AVATAR
+        from TALKOTHER t,TALKGROUP t2  where t2.GROUPID = ${id} and t.USERID = t2.USERID
+	</select>
+	
+	<!-- 群组成员信息查询 -->
+	<select id="getTolkGroupList" parameterType="int"  resultType="Map">  
+        select t.USERID from TALKOTHER t,TALKGROUP t2  where t2.GROUPID = ${id} and t.USERID = t2.USERID
+	</select>
+	
+	<!-- 修改个性签名 -->
+	<update id="modifySign" parameterType="String">  
+        update TALKOTHER set REMARK = '${sign}' where USERID=${id}
+	</update>
+	
+	
+	<!-- 修改在线状态签名 -->
+	<update id="modifyonline" parameterType="String">  
+        update TALKOTHER set ONLINESTATUS = '${online}' where USERID=${id}
+	</update>
+</mapper>	

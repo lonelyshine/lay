@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.ssm.mapper.JsrunMapper">
+	
+	<!-- 获取js编辑表中的最大的id-->
+	<select id="getMaxId" resultType="com.cy.ssm.beans.JsrunBean">  
+	 select Id  FROM  JSRUN order by Id desc
+	</select>
+	<!-- 将编写的jsrun内容保存到数据库中-->
+	<insert id="insertjsrun" parameterType="String">
+	 <!--   insert into JSRUN (Id,userId,worksBrief,worksHtml,worksCss,worksJs) VALUES (${Id}, ${userId}, '${worksBrief}','${worksHtml}','${worksCss}','${worksJs}') -->
+	   insert into JSRUN (Id,userId,worksBrief,worksHtml,worksCss,worksJs) VALUES (${Id}, ${userId}, '${worksBrief}',#{worksHtml,jdbcType=CLOB},#{worksCss,jdbcType=CLOB},#{worksJs,jdbcType=CLOB})
+	</insert>
+	
+	<!-- 获取用户自己的jsrun内容的数量-->
+	<select id="getjsrunNumber" parameterType="int"  resultType="Map" statementType="STATEMENT">  
+	 select count(*)  FROM  JSRUN  where USERID=${usreId}
+	</select>
+	
+</mapper>	

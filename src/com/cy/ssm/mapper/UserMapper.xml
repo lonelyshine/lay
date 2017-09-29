@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.ssm.mapper.UserMapper">
+<!-- 自定义返回结果集 -->
+   <resultMap id="userMap" type="UserBean">
+		<id     property="userId"       column="userId"       javaType="java.lang.Integer"></id>
+		<result property="userCode"     column="userCode"     javaType="java.lang.String"></result>
+		<result property="userName"     column="userName"     javaType="java.lang.String"></result>
+		<result property="userPassword" column="userPassword" javaType="java.lang.String"></result>
+		<result property="age"          column="age"          javaType="java.lang.Integer"></result>
+		<result property="sex"          column="sex"          javaType="java.lang.String"></result>
+		<result property="birthday"     column="birthday"     javaType="java.sql.Date" ></result>
+		<result property="tel"          column="tel"          javaType="java.lang.String"></result>
+		<result property="qq"           column="qq"           javaType="java.lang.String"></result>
+		<result property="email"        column="email"        javaType="java.lang.String"></result>
+		<result property="emailUser"    column="emailUser"    javaType="java.lang.String"></result>
+		<result property="emailPassword" column="emailPassword" javaType="java.lang.String"></result>
+		<result property="verfiyCode"    column="verfiyCode"        javaType="java.lang.String"></result>
+		<result property="address"       column="address"    javaType="java.lang.String"></result>
+		<result property="avatar"        column="avatar" javaType="java.lang.String"></result>
+		<result property="brief"        column="brief" javaType="java.lang.String"></result>
+	</resultMap>
+	
+	
+	
+	<!-- 通过userId查询用户邮箱名和密码 -->
+	<select id="getEmailUserPs" parameterType="int"  resultType="Map" statementType="STATEMENT">  
+      select emailUser,emailPassword from userinfo  where userId = ${userId} 
+	</select>
+	
+	<!-- 插入新的验证码 -->
+	<update id="insertCode" parameterType="String"  >  
+	  update USERINFO set VERFIYCODE = '${code}' where EMAIL='${getEmailperson}'
+	</update>
+	
+	<!-- 通过用户名查询邮箱 -->
+	<select id="getNameCode" parameterType="String"  resultType="Map" statementType="STATEMENT">  
+      select EMAIL,VERFIYCODE from userinfo  where USERCODE = '${nameCode}' 
+	</select>
+	
+	<!-- 修改密码 -->
+	<update id="updatePassword" parameterType="String"  >  
+	  update USERINFO set USERPASSWORD = '${userPassword}' where USERCODE = '${userCode}' 
+	</update>
+	
+	<!-- 用户注册 -->
+	<insert id="register" parameterType="String"  >  
+	  insert into USERINFO (USERID,USERCODE,USERNAME,USERPASSWORD,EMAIL) values (${id},'${userCode}','${userName}','${userPassword}','${email}')
+	</insert>
+	
+	
+	<!-- 获取用户表中的用户最大的id -->
+	<select id="getUserId" resultType="Map" statementType="STATEMENT">  
+      select USERID from USERINFO order by USERID desc
+	</select>
+	
+	
+	<!-- 插入用户头像路径 -->
+	<update id="updateAvatar" parameterType="String"  >  
+	   update USERINFO set AVATAR = '${avatar}' where USERID =${userid}
+	</update>
+	
+	<!-- 保存用户信息 -->
+	<update id="updateUserInfo" parameterType="String"  >  
+	   update USERINFO set USERNAME = '${userName}',AGE=${userAge},SEX='${userSex}',BIRTHDAY=to_date('${birthday}','yyyy-mm-dd'),TEL='${userTel}',QQ='${userQq}',EMAIL='${userEmail}',ADDRESS='${userAddress}',BRIEF='${userBrief}' where USERID =${userId}
+	</update>
+	
+	<!-- 批量操作和foreach标签 -->
+	
+	<insert id="batchInsertUser" parameterType="java.util.List">
+	   insert into userinfo values 
+	    <foreach collection="users" item="users" separator=",">
+	     (null,#{users.username},#{users.password},#{users.account})
+	    </foreach>
+	</insert>
+	
+	
+	<delete id="batchDeleteUser">
+	   delete from userinfo where id in (
+	     <foreach collection="list" item="list" separator=",">
+	      #{id}
+	     </foreach>
+	   )
+	</delete>
+	
+	<!--collection 为用于遍历的元素（必选），支持数组、List、Set  -->
+	<!-- item 表示集合中每一个元素进行迭代时的别名. -->
+	<!--separator表示在每次进行迭代之间以什么符号作为分隔 符.  -->
+	
+	<!--#在生成SQL时，对于字符类型参数，会拼装引号
+         $在生成SQL时，不会拼装引号，可用于order by之类的参数拼装
+	  -->
+	<select id="pagerUser" parameterType="java.util.Map" resultMap="userMap">
+	  select * from userinfo where 1=1
+	  <if test="username!=null">
+	   and username like '%${username}%'
+	  </if>
+	   limit ${index},${pageSize} 
+	</select>
+	
+	<select id="countUser" parameterType="java.util.Map" resultType="int">
+		select count(*) from userinfo where 1=1 
+		<if test="userName != null">
+			and userName like '%${username}%'	
+		</if>
+	</select>
+	
+</mapper>	
